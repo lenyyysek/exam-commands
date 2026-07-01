@@ -1,0 +1,99 @@
+РУКОВОДСТВО ПОЛЬЗОВАТЕЛЯ
+Наименование ПО: Vite
+
+Краткое описание:
+Vite — это современный инструмент для сборки фронтенд-приложений, созданный автором Vue.js. Отличается высокой скоростью работы благодаря использованию нативных ES-модулей в браузере во время разработки и сборке с использованием Rollup для продакшн. Поддерживает React, Vue, Angular, Svelte, Solid и другие фреймворки «из коробки» через плагины. Обеспечивает горячую замену модулей (HMR) для мгновенного обновления интерфейса при изменениях в коде, не перезагружая страницу целиком.
+
+Запуск программы:
+
+Проверка версии: vite --version
+
+Создание нового проекта: npm create vite@latest my-app
+
+Переход в папку проекта: cd my-app
+
+Установка зависимостей: npm install
+
+Запуск dev-сервера: npm run dev
+
+Сборка для продакшн: npm run build
+
+Предварительный просмотр собранного приложения: npm run preview
+
+Запланированный выход:
+
+В терминале: Ctrl+C для остановки dev-сервера
+
+В браузере: закрыть вкладку
+
+Основные функции:
+
+Быстрая разработка с горячей заменой модулей (HMR) — изменения отображаются мгновенно
+
+Оптимизация сборки для продакшн с минификацией, разделением кода (code splitting) и tree shaking
+
+Поддержка TypeScript, CSS Modules, JSON, PostCSS, CSS preprocessors (SASS, LESS, Stylus)
+
+Плагины для интеграции с React, Vue, Svelte, Solid, Preact, Angular и другими фреймворками
+
+Предварительная загрузка зависимостей для ускорения старта dev-сервера
+
+Поддержка переменных окружения (.env файлы) с префиксом VITE_
+
+Встроенный прокси для API (настройка в vite.config.js) для решения проблем CORS
+
+Поддержка статических ресурсов (изображения, шрифты) с автоматической оптимизацией
+
+Экспорт в различные форматы (ESM, UMD, CJS) для библиотек
+
+Поддержка серверного рендеринга (SSR) через плагины
+
+Основные приемы работы:
+
+Создание нового проекта: npm create vite@latest my-app → выбрать фреймворк (React/Vue/Svelte) → выбрать вариант (TypeScript/JavaScript)
+
+Установка зависимостей: cd my-app && npm install
+
+Запуск dev-сервера: npm run dev → открыть http://localhost:5173 (порт может отличаться)
+
+Сборка проекта: npm run build → собранные файлы появятся в папке dist
+
+Просмотр собранного проекта: npm run preview → открыть http://localhost:4173 для проверки перед деплоем
+
+Установка плагина для React: npm install @vitejs/plugin-react → добавить в vite.config.js
+
+Настройка vite.config.js:
+
+javascript
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+export default defineConfig({
+  plugins: [react()],
+  server: { port: 3000 },
+  build: { outDir: 'build' }
+})
+Использование переменных окружения: создать .env файл → VITE_API_URL=http://api.example.com → в коде import.meta.env.VITE_API_URL
+
+Настройка прокси для API: в vite.config.js → server: { proxy: { '/api': 'http://localhost:5000' } }
+
+Добавление CSS модулей: создать Component.module.css → импортировать как import styles from './Component.module.css'
+
+Использование TypeScript: при создании проекта выбрать TypeScript → писать код с типами в .tsx файлах
+
+Деплой на Vercel/Netlify: собрать проект npm run build → загрузить папку dist на платформу
+
+Добавление SASS: npm install -D sass → переименовать .css файлы в .scss
+
+Настройка алиасов для импорта: resolve: { alias: { '@': path.resolve(__dirname, './src') } }
+
+Интеграция с ESLint и Prettier: установить плагины и добавить конфигурацию в проект
+
+Сборка библиотеки: в vite.config.js добавить build: { lib: { entry: './src/index.js', name: 'MyLib' } }
+
+Добавление PWA поддержки: установить плагин vite-plugin-pwa → настроить конфигурацию
+
+Проверка размера бандла: использовать vite-bundle-visualizer для визуализации размера файлов
+
+Использование абсолютных импортов: настроить в vite.config.js → resolve: { alias: { '/@': path.resolve(__dirname, './src') } }
+
+Настройка SSR: установить @vitejs/plugin-vue для Vue SSR или другие SSR-плагины
