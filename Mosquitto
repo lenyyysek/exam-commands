@@ -1,0 +1,118 @@
+РУКОВОДСТВО ПОЛЬЗОВАТЕЛЯ
+Наименование ПО: Mosquitto (MQTT брокер)
+
+Краткое описание:
+Mosquitto — это легковесный MQTT-брокер с открытым исходным кодом, разработанный Eclipse Foundation. Используется для обмена сообщениями между устройствами в IoT-системах по протоколу MQTT (Message Queuing Telemetry Transport) — легковесному протоколу для маломощных устройств с низкой пропускной способностью. Поддерживает QoS (Quality of Service) уровни 0, 1, 2, аутентификацию пользователей, TLS/SSL шифрование для защищенного соединения и веб-сокеты. Широко применяется в системах умного дома, промышленного интернета вещей (IIoT), сенсорных сетях и телеметрии.
+
+Запуск программы:
+
+Запуск брокера: sudo systemctl start mosquitto
+
+Остановка брокера: sudo systemctl stop mosquitto
+
+Проверка статуса: sudo systemctl status mosquitto
+
+Перезапуск: sudo systemctl restart mosquitto
+
+Подключение к брокеру (подписка): mosquitto_sub -h localhost -t "#"
+
+Публикация сообщения: mosquitto_pub -h localhost -t "sensor/temp" -m "25.5"
+
+Запланированный выход:
+
+В подписчике: Ctrl+C для выхода
+
+В публикаторе: команда выполняется сразу, выход не требуется
+
+Остановка брокера: sudo systemctl stop mosquitto
+
+Основные функции:
+
+Обмен сообщениями между устройствами по протоколу MQTT (поддержка версий 3.1 и 3.1.1)
+
+Публикация (publish) и подписка (subscribe) на темы с поддержкой Wildcards (+ для одного уровня, # для всех уровней)
+
+Поддержка QoS уровней: 0 (не более одного — fire and forget), 1 (гарантированно доставлено), 2 (ровно один раз)
+
+Аутентификация пользователей с использованием файла паролей (симметричное шифрование)
+
+TLS/SSL шифрование для защищенного соединения (с поддержом сертификатов)
+
+Сохранение сессий (persistent sessions) для возобновления работы после переподключения
+
+WebSocket поддержка для работы с браузерами и веб-приложениями
+
+Сохранение последних сообщений (retained messages) для новых подписчиков
+
+Поддержка мостов (bridges) для соединения нескольких брокеров
+
+Логирование всех операций для мониторинга и отладки
+
+Основные приемы работы:
+
+Запуск брокера: sudo systemctl start mosquitto — запускает службу в фоновом режиме
+
+Проверка, что брокер работает: sudo systemctl status mosquitto → должен показывать active (running)
+
+Подписка на все темы (для отладки): mosquitto_sub -h localhost -t "#" — покажет все сообщения от всех устройств
+
+Подписка на конкретную тему: mosquitto_sub -h localhost -t "sensor/temp" — только сообщения с датчика температуры
+
+Подписка с QoS 1: mosquitto_sub -h localhost -t "sensor/temp" -q 1 — гарантированная доставка
+
+Публикация сообщения: mosquitto_pub -h localhost -t "sensor/temp" -m "25.5" — отправить значение температуры
+
+Публикация с QoS: mosquitto_pub -h localhost -t "sensor/temp" -m "25.5" -q 1
+
+Публикация с сохранением (retained): mosquitto_pub -h localhost -t "sensor/temp" -m "25.5" -r — новым подписчикам сразу придет последнее значение
+
+Создание пользователя (первый раз): sudo mosquitto_passwd -c /etc/mosquitto/passwd myuser → ввести пароль
+
+Добавление пользователя в существующий файл: sudo mosquitto_passwd /etc/mosquitto/passwd newuser → ввести пароль
+
+Настройка конфигурации: sudo nano /etc/mosquitto/mosquitto.conf — отредактировать файл
+
+Пример конфигурации для аутентификации:
+
+conf
+listener 1883
+allow_anonymous false
+password_file /etc/mosquitto/passwd
+Настройка TLS/SSL: добавить в конфиг listener 8883 → certfile /etc/mosquitto/certs/server.crt → keyfile /etc/mosquitto/certs/server.key → cafile /etc/mosquitto/ca.crt
+
+Перезапуск после изменений: sudo systemctl restart mosquitto
+
+Подключение с авторизацией: mosquitto_sub -h localhost -u myuser -P mypass -t "#"
+
+Просмотр логов в реальном времени: sudo tail -f /var/log/mosquitto/mosquitto.log
+
+Подключение через WebSocket: в конфиге добавить listener 9001 и protocol websockets
+
+Отладка с verbose: mosquitto_sub -v -t "#" — показывает тему и сообщение вместе
+
+Подключение к удаленному брокеру: mosquitto_sub -h broker.example.com -p 1883 -t "#"
+
+Создание моста между брокерами: в конфиге добавить connection bridge → address broker2.example.com → topic # both 0
+
+Публикация из скрипта на Python:
+
+python
+import paho.mqtt.client as mqtt
+client = mqtt.Client()
+client.connect("localhost", 1883, 60)
+client.publish("sensor/temp", "25.5")
+client.disconnect()
+Подписка в Python:
+
+python
+import paho.mqtt.client as mqtt
+def on_message(client, userdata, msg):
+    print(f"Тема: {msg.topic}, Сообщение: {msg.payload}")
+client = mqtt.Client()
+client.on_message = on_message
+client.connect("localhost", 1883, 60)
+client.subscribe("sensor/#")
+client.loop_forever()
+Проверка наличия брокера: sudo netstat -tulpn | grep 1883 — показывает, что порт 1883 открыт
+
+Изменение порта: в конфиге изменить listener 1883 на другой порт → перезапустить
