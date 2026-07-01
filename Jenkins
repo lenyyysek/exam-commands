@@ -1,0 +1,112 @@
+РУКОВОДСТВО ПОЛЬЗОВАТЕЛЯ
+Наименование ПО: Jenkins
+
+Краткое описание:
+Jenkins — это популярная платформа с открытым исходным кодом для автоматизации сборки, тестирования и развертывания приложений (CI/CD). Поддерживает тысячи плагинов, интеграцию с Git, Docker, Kubernetes, Maven, Gradle, позволяет создавать конвейеры (Pipelines) для автоматизации любого этапа разработки. Используется в DevOps-командах для обеспечения быстрой и надежной доставки кода. Jenkins работает как серверное приложение, доступное через веб-интерфейс.
+
+Запуск программы:
+
+Проверка статуса: sudo systemctl status jenkins
+
+Запуск службы: sudo systemctl start jenkins
+
+Остановка службы: sudo systemctl stop jenkins
+
+Перезапуск службы: sudo systemctl restart jenkins
+
+Доступ в браузере: http://localhost:8080 (или IP-адрес сервера:8080)
+
+Получение начального пароля: sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+
+Запланированный выход:
+
+Остановка службы: sudo systemctl stop jenkins
+
+В браузере: закрыть вкладку
+
+Основные функции:
+
+Автоматическая сборка приложений из систем контроля версий (Git, SVN, Mercurial)
+
+Запуск юнит-тестов, интеграционных тестов и статического анализа кода
+
+Автоматическое развертывание (деплой) на сервера и в облачные платформы
+
+Создание пайплайнов (Pipeline as Code) через Jenkinsfile с описанием всех шагов
+
+Мониторинг статуса сборок и отправка уведомлений (email, Slack, Telegram)
+
+Интеграция с Docker и Kubernetes для контейнерной сборки и развертывания
+
+Управление плагинами и настройками безопасности (аутентификация, авторизация)
+
+Распределенная сборка (Master-Agent) для масштабирования
+
+Хранение артефактов сборки (JAR, WAR, Docker образы)
+
+Поддержка многоконвейерных проектов и параллельных сборок
+
+Основные приемы работы:
+
+Получение начального пароля: sudo cat /var/lib/jenkins/secrets/initialAdminPassword — скопировать пароль
+
+Вход в систему: открыть браузер → http://localhost:8080 → вставить пароль → продолжить
+
+Установка рекомендуемых плагинов: на странице установки выбрать «Install suggested plugins»
+
+Создание администратора: заполнить форму с именем, паролем и email
+
+Установка плагинов вручную: «Manage Jenkins» → «Plugins» → «Available» → выбрать нужные (Git, Pipeline, Docker) → «Install without restart»
+
+Создание новой задачи: «New Item» → ввести имя → выбрать тип (Freestyle/Pipeline) → «OK»
+
+Настройка Git в задаче: вкладка «Source Code Management» → выбрать Git → ввести URL репозитория и учетные данные
+
+Добавление шага сборки: вкладка «Build» → «Add build step» → «Execute shell» → ввести команды (например, ./gradlew build)
+
+Настройка триггера: вкладка «Build Triggers» → «Poll SCM» → ввести расписание (например, H/5 * * * * для проверки каждые 5 минут)
+
+Создание Pipeline (Jenkinsfile): в проекте создать файл Jenkinsfile → в Jenkins выбрать «Pipeline script from SCM»
+
+Пример Jenkinsfile:
+
+groovy
+pipeline {
+    agent any
+    stages {
+        stage('Build') {
+            steps {
+                sh 'npm install'
+                sh 'npm run build'
+            }
+        }
+        stage('Test') {
+            steps {
+                sh 'npm test'
+            }
+        }
+        stage('Deploy') {
+            steps {
+                sh 'docker build -t myapp .'
+                sh 'docker run -d -p 8080:80 myapp'
+            }
+        }
+    }
+}
+Просмотр результатов сборки: перейти в задачу → выбрать номер сборки → «Console Output»
+
+Настройка уведомлений: «Manage Jenkins» → «Configure System» → раздел «Email Notification» → ввести SMTP настройки
+
+Установка агента: «Manage Jenkins» → «Nodes» → «New Node» → настроить и запустить агент
+
+Настройка безопасности: «Manage Jenkins» → «Configure Global Security» → включить аутентификацию и авторизацию
+
+Создание учетных данных: «Manage Jenkins» → «Credentials» → «System» → «Global credentials» → «Add Credentials»
+
+Просмотр артефактов: после сборки перейти в задачу → выбрать номер сборки → «Artifacts»
+
+Настройка Jenkinsfile для многоконтейнерных приложений: добавить шаги сборки Docker Compose
+
+Интеграция с GitHub: установить плагин GitHub → настроить вебхуки для автоматического запуска сборки
+
+Бэкап Jenkins: заархивировать папку /var/lib/jenkins/ для сохранения настроек и задач
