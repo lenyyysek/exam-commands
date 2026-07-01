@@ -1,0 +1,299 @@
+РУКОВОДСТВО ПОЛЬЗОВАТЕЛЯ
+Наименование ПО: SpeechRecognition (Python библиотека)
+
+Краткое описание:
+SpeechRecognition — это библиотека для распознавания речи в Python. Поддерживает множество движков: Google Speech Recognition (требует интернет), Vosk (офлайн, работает локально без интернета), Sphinx (офлайн, менее точный), Wit.ai, Microsoft Azure Speech, Amazon Transcribe. Позволяет распознавать голос с микрофона в реальном времени или из аудиофайлов (WAV, FLAC, AIFF). Поддерживает множество языков, включая русский, английский, немецкий, французский, испанский и другие. Широко используется в системах голосового управления, голосовых ассистентах и приложениях для обработки речи.
+
+Запуск программы:
+
+Проверка установки: python3 -c "import speech_recognition; print(speech_recognition.__version__)"
+
+Запуск скрипта с микрофоном: python3 speech.py
+
+Запуск скрипта с файлом: python3 speech.py audio.wav
+
+Запланированный выход:
+
+Ctrl+C для остановки выполнения
+
+Закрыть окно (если используется GUI)
+
+Основные функции:
+
+Распознавание речи с микрофона в реальном времени с настройкой адаптации к шуму
+
+Распознавание речи из аудиофайлов (WAV, FLAC, AIFF, WAV с поддержкой различных частот дискретизации)
+
+Поддержка множества движков распознавания: Google (бесплатный, но требует интернет), Vosk (офлайн, с открытым исходным кодом), Sphinx (офлайн, устаревший), Wit.ai, Microsoft Azure Speech, Amazon Transcribe
+
+Поддержка множества языков: русский (ru-RU), английский (en-US), немецкий, французский, испанский и др.
+
+Акустический анализ и обработка аудиопотоков с настройкой порога чувствительности
+
+Интеграция с системами голосового управления и виртуальными ассистентами
+
+Поддержка записи аудио в файл для последующей обработки
+
+Возможность настройки энергетического порога для лучшего распознавания в шумной среде
+
+Основные приемы работы:
+
+Импорт библиотеки: import speech_recognition as sr
+
+Инициализация распознавателя: r = sr.Recognizer() — создает объект для распознавания
+
+Захват звука с микрофона: with sr.Microphone() as source: audio = r.listen(source) — записывает звук с микрофона
+
+Распознавание через Google (русский язык): text = r.recognize_google(audio, language="ru-RU")
+
+Распознавание через Google (английский язык): text = r.recognize_google(audio, language="en-US")
+
+Обработка ошибок распознавания:
+
+python
+try:
+    text = r.recognize_google(audio, language="ru-RU")
+    print("Вы сказали:", text)
+except sr.UnknownValueError:
+    print("Не удалось распознать речь")
+except sr.RequestError:
+    print("Ошибка соединения с сервером")
+Распознавание из аудиофайла: with sr.AudioFile("audio.wav") as source: audio = r.record(source)
+
+Настройка адаптации к микрофону для лучшего распознавания: r.adjust_for_ambient_noise(source, duration=1) — подстраивается под уровень шума
+
+Распознавание с Vosk (офлайн):
+
+python
+import vosk
+model = vosk.Model("model-ru")
+rec = vosk.KaldiRecognizer(model, 16000)
+with sr.Microphone(sample_rate=16000) as source:
+    audio = r.listen(source)
+    if rec.AcceptWaveform(audio.get_wav_data()):
+        result = json.loads(rec.Result())
+        print(result["text"])
+Работа с длинными аудиофайлами: audio = r.record(source, duration=10) — захватить только первые 10 секунд
+
+Обработка фонового шума: r.energy_threshold = 300 — настройка порога чувствительности (ниже = чувствительнее к тихим звукам)
+
+Запись аудио в файл: with open("output.wav", "wb") as f: f.write(audio.get_wav_data())
+
+Распознавание с Google Cloud Speech (требуется API ключ): text = r.recognize_google_cloud(audio, credentials_json=credentials)
+
+Работа с буфером речи в фоновом режиме: r.listen_in_background(source, callback) — непрерывное распознавание в фоне
+
+Установка дополнительных библиотек:
+
+pip install PyAudio — для работы с микрофоном
+
+pip install vosk — для офлайн распознавания
+
+pip install openai-whisper — для Whisper (нейросетевое распознавание)
+
+Использование Whisper (OpenAI):
+
+python
+import whisper
+model = whisper.load_model("base")  # tiny, base, small, medium, large
+result = model.transcribe("audio.wav")
+print(result["text"])
+Распознавание с Sphinx (офлайн, устаревший): text = r.recognize_sphinx(audio)
+
+Распознавание с Wit.ai: text = r.recognize_wit(audio, key="YOUR_API_KEY")
+
+Настройка длительности записи: audio = r.listen(source, timeout=5, phrase_time_limit=3) — запись до 5 секунд ожидания и до 3 секунд фразы
+
+Проверка доступных микрофонов: sr.Microphone.list_microphone_names() — список устройств
+
+Выбор конкретного микрофона: with sr.Microphone(device_index=1) as source: — выбрать второй микрофон в списке
+
+Работа с аудио в реальном времени с использованием pyaudio для низкоуровневого доступа к потоку
+
+Конвертация аудио в текст из YouTube: скачать аудио через yt-dlp → распознать с помощью Whisper
+
+Создание голосового ассистента: комбинация SpeechRecognition + pyttsx3 (синтез речи) для голосового взаимодействия
+
+
+
+
+
+
+
+
+
+
+РУКОВОДСТВО ПОЛЬЗОВАТЕЛЯ
+Наименование ПО: Rasa
+
+Краткое описание:
+Rasa — это фреймворк с открытым исходным кодом для создания диалоговых систем, чат-ботов и виртуальных помощников на основе искусственного интеллекта. Состоит из двух основных компонентов: Rasa NLU (обработка естественного языка — распознавание намерений (intents) и сущностей (entities)) и Rasa Core (управление диалогами — обработка контекста, состояния разговора и выбор следующего действия). Использует машинное обучение на основе TensorFlow и scikit-learn для улучшения качества диалогов с течением времени. Поддерживает интеграцию с Telegram, Slack, Facebook Messenger, веб-чатами, WhatsApp и другими каналами.
+
+Запуск программы:
+
+Создание нового проекта: rasa init (создает шаблон с примерами)
+
+Обучение модели: rasa train (создает папку models/ с обученной моделью)
+
+Тестирование в терминале: rasa shell (чат с ботом в командной строке)
+
+Запуск сервера: rasa run (сервер доступен на http://localhost:5005)
+
+Запуск Action Server: rasa run actions (для кастомных действий на Python)
+
+Валидация проекта: rasa data validate (проверяет корректность данных)
+
+Запланированный выход:
+
+В терминале: Ctrl+C для остановки сервера или бота
+
+В браузере: закрыть вкладку
+
+Основные функции:
+
+Обработка естественного языка (NLU) — распознавание намерений (intents) и сущностей (entities) из сообщений пользователя
+
+Управление диалогами (Dialogue Management) — обработка контекста, состояния разговора, управление слогами и памятью
+
+Интеграция с каналами связи (Telegram, Slack, Facebook Messenger, веб-чат, WhatsApp через сторонние сервисы)
+
+Обучение моделей с использованием TensorFlow и scikit-learn с возможностью тонкой настройки (fine-tuning)
+
+Тестирование и валидация диалогов — автоматические тесты для проверки качества ответов
+
+REST API для общения с ботом из внешних приложений (веб-сайты, мобильные приложения)
+
+Управление памятью диалогов через слоты (slots) и контекстные данные
+
+Кастомные действия (actions) на Python для интеграции с внешними API, базами данных и бизнес-логикой
+
+Поддержка форм (forms) для сбора информации от пользователя в несколько шагов
+
+Поддержка правил (rules) для безусловных ответов на определенные сообщения
+
+Основные приемы работы:
+
+Создание нового проекта: rasa init — создается папка с шаблоном проекта и примерами
+
+Структура проекта:
+
+data/nlu.yml — данные для NLU (намерения, сущности, примеры фраз)
+
+data/stories.yml — истории диалогов (контекстные сценарии)
+
+data/rules.yml — правила диалога (безусловные ответы)
+
+domain.yml — описание намерений, сущностей, ответов, слотов, действий
+
+config.yml — настройки моделей NLU и Core (язык, pipeline, политики)
+
+actions/ — кастомные действия на Python (файл actions.py)
+
+Добавление намерения в nlu.yml:
+
+yaml
+nlu:
+- intent: greet
+  examples: |
+    - Привет
+    - Здравствуйте
+    - Добрый день
+    - Здарова
+Добавление ответа на намерение в domain.yml:
+
+yaml
+responses:
+  utter_greet:
+  - text: "Здравствуйте! Чем могу помочь?"
+  - text: "Привет! Как дела?"
+Создание истории диалога в stories.yml:
+
+yaml
+stories:
+- story: Приветствие
+  steps:
+  - intent: greet
+  - action: utter_greet
+Создание правила в rules.yml:
+
+yaml
+rules:
+- rule: Приветствие
+  steps:
+  - intent: greet
+  - action: utter_greet
+Обучение модели: rasa train — создается папка models/ с моделью
+
+Тестирование в терминале: rasa shell → вводить фразы и проверять ответы бота
+
+Запуск сервера: rasa run — сервер доступен на http://localhost:5005 (REST API для общения)
+
+Запуск Action Server: rasa run actions — запускает сервер для кастомных действий на Python
+
+Создание кастомного действия в actions/actions.py:
+
+python
+from typing import Any, Text, Dict, List
+from rasa_sdk import Action, Tracker
+from rasa_sdk.executor import CollectingDispatcher
+
+class ActionHello(Action):
+    def name(self) -> Text:
+        return "action_hello"
+
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        dispatcher.utter_message(text="Привет от кастомного действия!")
+        return []
+Добавление действия в domain.yml: actions: - action_hello
+
+Интеграция с Telegram: добавить в credentials.yml:
+
+yaml
+telegram:
+  access_token: "YOUR_BOT_TOKEN"
+  verify: "YOUR_BOT_NAME"
+  webhook_url: "https://your-server.com/webhooks/telegram"
+Запуск бота с каналами: rasa run --enable-api --cors "*" (включает поддержку всех каналов)
+
+Тестирование NLU: rasa test nlu — оценивает точность распознавания намерений и сущностей
+
+Тестирование Core: rasa test core — оценивает качество диалогов с использованием тестовых историй
+
+Валидация проекта: rasa data validate — проверяет корректность всех данных (nlu, stories, rules)
+
+Добавление сущностей: в nlu.yml добавить [Иван](name) для распознавания имен
+
+Использование слотов: в domain.yml добавить slots → в историях использовать слоты для сохранения данных
+
+Настройка config.yml:
+
+yaml
+language: ru
+pipeline:
+  - name: WhitespaceTokenizer
+  - name: RegexFeaturizer
+  - name: LexicalSyntacticFeaturizer
+  - name: CountVectorsFeaturizer
+  - name: CountVectorsFeaturizer
+    analyzer: char_wb
+    min_ngram: 1
+    max_ngram: 4
+  - name: DIETClassifier
+    epochs: 100
+    constrain_similarities: true
+  - name: EntitySynonymMapper
+  - name: ResponseSelector
+    epochs: 100
+policies:
+  - name: MemoizationPolicy
+  - name: RulePolicy
+  - name: UnexpecTEDIntentPolicy
+    epochs: 100
+  - name: TEDPolicy
+    epochs: 100
+    max_history: 5
+Использование форм для сбора данных: создать форму в domain.yml → добавить в rules.yml → в actions.py определить логику
+
+Экспорт модели для развертывания: rasa export — экспортирует модель в формат для развертывания
+
+Запуск бота с пользовательским интерфейсом: использовать rasa-x для визуального управления и обучения
