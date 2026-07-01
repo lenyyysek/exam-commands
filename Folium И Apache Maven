@@ -1,0 +1,195 @@
+РУКОВОДСТВО ПОЛЬЗОВАТЕЛЯ
+Наименование ПО: Folium (библиотека для визуализации геоданных)
+
+Краткое описание:
+Folium — это библиотека для создания интерактивных карт в Python на основе Leaflet.js (библиотека JavaScript для интерактивных карт). Позволяет визуализировать геоданные на картах с подложками OpenStreetMap, Mapbox, Stamen, CartoDB и другими. Поддерживает добавление маркеров, линий, полигонов, кругов, тепловых карт, кластеризацию точек, наложение слоев и экспорт в HTML. Широко используется для визуализации транспортных потоков, логистики, мониторинга, геоаналитики, экологических данных и картографии. Интегрируется с GeoPandas, Pandas и другими библиотеками обработки данных.
+
+Запуск программы:
+
+Проверка установки: python3 -c "import folium; print(folium.__version__)"
+
+Создание карты: m = folium.Map(location=[55.75, 37.61], zoom_start=12)
+
+Сохранение карты: m.save("map.html")
+
+Открытие карты в браузере: firefox map.html или python3 -m webbrowser map.html
+
+Запланированный выход:
+
+Ctrl+C для остановки скрипта
+
+Закрыть окно браузера с картой
+
+Основные функции:
+
+Создание интерактивных карт с различными подложками (OpenStreetMap, Mapbox, Stamen Terrain, Stamen Toner, CartoDB, и др.)
+
+Добавление маркеров с popup-окнами, иконками, цветами и пользовательскими HTML-содержимым
+
+Рисование линий (полилиний), полигонов, окружностей и прямоугольников на карте
+
+Построение тепловых карт (HeatMap) для визуализации плотности данных в различных точках
+
+Кластеризация маркеров (MarkerCluster) для отображения большого количества точек без перегрузки карты
+
+Наложение нескольких слоев с возможностью переключения (Layer Control)
+
+Экспорт карт в HTML для использования в отчетах, презентациях и веб-приложениях
+
+Интеграция с GeoJSON для загрузки и отображения геоданных в формате GeoJSON
+
+Интеграция с GeoPandas для работы с географическими данными и их визуализации
+
+Добавление элементов управления (масштаб, смена слоев, полноэкранный режим)
+
+Основные приемы работы:
+
+Импорт библиотеки: import folium
+
+Создание базовой карты с центром в Москве: m = folium.Map(location=[55.75, 37.61], zoom_start=12)
+
+Создание карты с другой подложкой: m = folium.Map(location=[55.75, 37.61], tiles="Stamen Terrain")
+
+Добавление маркера:
+
+python
+folium.Marker(
+    location=[55.75, 37.61],
+    popup="Москва",
+    icon=folium.Icon(color="red", icon="info-sign")
+).add_to(m)
+Добавление нескольких маркеров из списка:
+
+python
+locations = [[55.75, 37.61], [55.80, 37.70], [55.70, 37.55]]
+for loc in locations:
+    folium.Marker(location=loc).add_to(m)
+Добавление линии (маршрута): folium.PolyLine(locations=[ [55.75, 37.61], [55.80, 37.70] ], color="blue", weight=2).add_to(m)
+
+Добавление полигона: folium.Polygon(locations=[ [55.75, 37.61], [55.80, 37.70], [55.78, 37.80] ], color="green", fill=True).add_to(m)
+
+Добавление круга: folium.Circle(location=[55.75, 37.61], radius=500, color="red", fill=True).add_to(m) — радиус в метрах
+
+Создание тепловой карты:
+
+python
+from folium.plugins import HeatMap
+data = [[55.75, 37.61, 10], [55.80, 37.70, 20], [55.70, 37.55, 15]]
+HeatMap(data, radius=15).add_to(m)
+Кластеризация маркеров:
+
+python
+from folium.plugins import MarkerCluster
+cluster = MarkerCluster().add_to(m)
+for loc in locations:
+    folium.Marker(location=loc).add_to(cluster)
+Сохранение карты: m.save("transport_map.html")
+
+Открытие карты в браузере: import webbrowser; webbrowser.open("transport_map.html")
+
+Загрузка геоданных из GeoJSON: folium.GeoJson("data.geojson").add_to(m)
+
+Использование GeoPandas:
+
+python
+import geopandas as gpd
+gdf = gpd.read_file("roads.geojson")
+folium.GeoJson(gdf).add_to(m)
+Настройка масштаба по области: m.fit_bounds([[55.70, 37.55], [55.80, 37.70]]) — автоматически масштабирует карту на указанную область
+
+Добавление слоев с переключением:
+
+python
+folium.LayerControl().add_to(m)
+Добавление текста на карту (Tooltip): folium.Tooltip("Это Москва").add_to(marker) — всплывающая подсказка при наведении
+
+Визуализация транспортных маршрутов: folium.PolyLine(locations=route_points, color="red", weight=3).add_to(m) — route_points это список координат маршрута
+
+Добавление иконки FontAwesome: icon=folium.Icon(color="green", icon="car", prefix="fa") — иконка автомобиля
+
+Использование CircleMarker: folium.CircleMarker(location=[55.75, 37.61], radius=10, color="blue", fill=True).add_to(m) — маркер в виде круга
+
+Работа с DataFrame в Pandas:
+
+python
+import pandas as pd
+df = pd.DataFrame({'lat': [55.75, 55.80], 'lon': [37.61, 37.70], 'name': ['A', 'B']})
+for _, row in df.iterrows():
+    folium.Marker([row['lat'], row['lon']], popup=row['name']).add_to(m)
+Добавление изображения на карту: folium.raster_layers.ImageOverlay(image_data, bounds=[[lat1, lon1], [lat2, lon2]]).add_to(m)
+
+Использование разных стилей для полигонов: style_function=lambda feature: {'fillColor': 'green', 'color': 'black', 'weight': 2}
+
+Добавление координатной сетки: использовать folium.plugins.MousePosition() для отображения координат при наведении мыши
+
+Создание мини-карты: folium.plugins.MiniMap().add_to(m) — показывает уменьшенную карту в углу
+
+
+
+
+
+
+
+
+
+РУКОВОДСТВО ПОЛЬЗОВАТЕЛЯ
+Наименование ПО: Apache Maven
+
+Краткое описание:
+Apache Maven — это инструмент для управления проектами и автоматизации сборки Java-приложений. Управляет зависимостями (библиотеками), компиляцией, тестированием, упаковкой (JAR, WAR, EAR) и развертыванием. Использует файл pom.xml (Project Object Model) для описания структуры проекта, зависимостей, плагинов, настроек сборки и профилей. Автоматически загружает зависимости из центрального репозитория Maven (или корпоративного репозитория). Широко используется в корпоративных проектах, логистических системах, SCM- и ERP-решениях, веб-приложениях и микросервисах.
+
+Запуск программы:
+
+Проверка версии: mvn --version — показывает версию Maven, Java и системную информацию
+
+Создание проекта: mvn archetype:generate -DgroupId=com.example -DartifactId=my-app -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false
+
+Сборка проекта: mvn package — компилирует, тестирует и создает JAR/WAR
+
+Очистка: mvn clean — удаляет папку target/
+
+Запуск тестов: mvn test
+
+Установка в локальный репозиторий: mvn install — копирует артефакт в ~/.m2/repository/
+
+Сборка без тестов: mvn package -DskipTests
+
+Запланированный выход:
+
+Ctrl+C для остановки выполняемой команды
+
+Дождаться завершения сборки (обычно занимает несколько секунд)
+
+Основные функции:
+
+Управление зависимостями (автоматическая загрузка библиотек из удаленных репозиториев Maven Central)
+
+Автоматическая компиляция исходного кода с настройкой версии Java
+
+Запуск тестов (JUnit, TestNG) с формированием отчетов в формате HTML и XML
+
+Создание JAR (для библиотек), WAR (для веб-приложений), EAR (для корпоративных приложений) пакетов
+
+Генерация документации (JavaDoc) в автоматическом режиме
+
+Интеграция с системами CI/CD (Jenkins, GitLab CI, GitHub Actions) для автоматической сборки
+
+Многомодульная сборка для больших проектов с несколькими подпроектами
+
+Управление профилями сборки (разработка, тестирование, продакшн)
+
+Копирование зависимостей в папку для удобного запуска (mvn dependency:copy-dependencies)
+
+Генерация сайта проекта с документацией и отчетами (mvn site)
+
+Основные приемы работы:
+
+Создание нового проекта из архетипа:
+mvn archetype:generate -DgroupId=com.example -DartifactId=my-app -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false
+
+Структура проекта после создания:
+
+src/main/java — исходники приложения
+
+src/test/java — тесты (JUnit)
+
