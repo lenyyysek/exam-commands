@@ -1,0 +1,89 @@
+РУКОВОДСТВО ПОЛЬЗОВАТЕЛЯ
+Наименование ПО: MLflow
+
+Краткое описание:
+MLflow — это платформа с открытым исходным кодом для управления полным жизненным циклом машинного обучения. Позволяет отслеживать эксперименты (параметры, метрики, артефакты), сохранять и управлять версиями моделей, развертывать модели в продакшн и регистрировать их в Model Registry. Поддерживает интеграцию с TensorFlow, PyTorch, Scikit-learn, XGBoost, LightGBM, Spark и Keras. MLflow состоит из четырех основных компонентов: Tracking, Models, Projects и Registry.
+
+Запуск программы:
+
+Запуск UI сервера отслеживания: mlflow ui
+
+Доступ в браузере: http://localhost:5000
+
+Запуск с указанием базы данных: mlflow ui --backend-store-uri sqlite:///mlflow.db
+
+Запуск с указанием хранилища артефактов: mlflow ui --default-artifact-root ./artifacts
+
+Запуск сервера с полной настройкой: mlflow server --backend-store-uri sqlite:///mlflow.db --default-artifact-root ./artifacts --host 0.0.0.0 --port 5000
+
+Запланированный выход:
+
+В терминале: Ctrl+C для остановки UI сервера
+
+В браузере: закрыть вкладку
+
+Основные функции:
+
+Отслеживание экспериментов — логирование параметров, метрик, артефактов (графики, модели, датасеты)
+
+Управление версиями моделей с возможностью регистрации и перехода между версиями (Stage: Staging, Production, Archived)
+
+Сохранение и загрузка моделей в универсальном формате (MLflow Model) с описанием зависимостей
+
+Развертывание моделей в продакшн через REST API или интеграцию с облачными платформами (AWS SageMaker, Azure ML)
+
+Интеграция с TensorFlow, PyTorch, Scikit-learn, XGBoost, LightGBM, Spark, Keras и другими фреймворками
+
+Хранение артефактов в локальном хранилище, S3, Azure Blob, Google Cloud Storage
+
+Совместная работа над экспериментами через общий сервер MLflow Tracking
+
+Воспроизводимость экспериментов через MLflow Projects (упаковка кода в исполняемые проекты)
+
+Поддержка автоматического логирования для популярных фреймворков
+
+Основные приемы работы:
+
+Импорт MLflow в Python: import mlflow
+
+Установка URI для отслеживания: mlflow.set_tracking_uri("http://localhost:5000")
+
+Создание эксперимента: mlflow.set_experiment("experiment_name")
+
+Запуск эксперимента: with mlflow.start_run(): — создает новый ран
+
+Логирование параметров: mlflow.log_param("learning_rate", 0.01)
+
+Логирование метрик: mlflow.log_metric("accuracy", 0.95) или mlflow.log_metric("loss", 0.05, step=100)
+
+Логирование артефактов: mlflow.log_artifact("plot.png") или mlflow.log_artifacts("./plots_folder")
+
+Сохранение модели Scikit-learn: mlflow.sklearn.save_model(model, "model_path")
+
+Логирование модели в эксперимент: mlflow.sklearn.log_model(model, "model")
+
+Загрузка модели: model = mlflow.sklearn.load_model("model_path")
+
+Запуск UI: mlflow ui → открыть браузер на localhost:5000
+
+Просмотр экспериментов: в UI выбрать эксперимент → просмотреть параметры и метрики в виде таблицы
+
+Сравнение экспериментов: в UI выбрать несколько экспериментов → сравнить метрики на графиках
+
+Регистрация модели: в UI перейти в «Models» → «Register Model» → указать имя и версию
+
+Изменение стадии модели: в UI выбрать модель → «Stage» → выбрать Production/Staging/Archived
+
+Запуск MLflow с сервером БД: mlflow server --backend-store-uri sqlite:///mlflow.db --default-artifact-root ./artifacts --host 0.0.0.0 --port 5000
+
+Автологирование для TensorFlow: mlflow.tensorflow.autolog()
+
+Автологирование для PyTorch: mlflow.pytorch.autolog()
+
+Логирование дополнительных файлов: mlflow.log_artifact("requirements.txt") для воспроизводимости
+
+Просмотр логов экспериментов: в папке mlruns/ хранятся все данные экспериментов (параметры, метрики, артефакты)
+
+Удаление эксперимента: mlflow.delete_experiment(experiment_id)
+
+Получение списка экспериментов: mlflow.search_experiments()
