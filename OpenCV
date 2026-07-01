@@ -1,0 +1,114 @@
+РУКОВОДСТВО ПОЛЬЗОВАТЕЛЯ
+Наименование ПО: OpenCV (Open Source Computer Vision Library)
+
+Краткое описание:
+OpenCV — это библиотека с открытым исходным кодом для компьютерного зрения, обработки изображений и машинного обучения. Содержит более 2500 оптимизированных алгоритмов для распознавания объектов (лица, люди, автомобили, предметы), трекинга движения, калибровки камер, обработки видео, сегментации изображений и анализа данных. Поддерживает Python, C++, Java, MATLAB и другие языки. Имеет оптимизированные реализации с использованием GPU (CUDA) и SIMD-инструкций для ускорения вычислений в реальном времени.
+
+Запуск программы:
+
+Проверка установки (Python): python3 -c "import cv2; print(cv2.__version__)"
+
+Запуск программы с OpenCV: python3 script.py
+
+Проверка установки (C++): pkg-config --modversion opencv4
+
+Запуск C++ программы: g++ -o app app.cpp \pkg-config --cflags --libs opencv4``
+
+Запланированный выход:
+
+Ctrl+C для остановки выполняемой программы (особенно при работе с видео)
+
+Закрыть окна OpenCV: cv2.destroyAllWindows()
+
+Основные функции:
+
+Обработка изображений — изменение размера, поворот, фильтрация (размытие, резкость), преобразование цветовых пространств (RGB, HSV, Grayscale)
+
+Распознавание объектов — лица, люди, автомобили, предметы с использованием Haar Cascades, HOG (Histogram of Oriented Gradients), DNN (Deep Neural Networks)
+
+Трекинг движения (Optical Flow, MeanShift, CamShift, Kalman Filter)
+
+Видеоаналитика — чтение и запись видео с камер и файлов, обработка потоков в реальном времени
+
+Калибровка камер — вычисление параметров камеры (матрица, искажения) для устранения искажений и 3D-реконструкции
+
+Машинное обучение и нейросети — интеграция с TensorFlow, PyTorch, ONNX, Caffe, Darknet
+
+Обнаружение контуров, ключевых точек (SIFT, SURF, ORB), сегментация изображений
+
+Работа с потоками видео в реальном времени с поддержкой GStreamer и FFmpeg
+
+Распознавание текста (OCR) через Tesseract интеграцию
+
+Создание панорам (stitching) из нескольких изображений
+
+Основные приемы работы:
+
+Импорт библиотеки: import cv2
+
+Чтение изображения: img = cv2.imread("image.jpg") — если файл не найден, вернет None
+
+Отображение изображения: cv2.imshow("Window", img) → cv2.waitKey(0) → cv2.destroyAllWindows()
+
+Сохранение изображения: cv2.imwrite("output.jpg", img) — сохраняет в указанном формате
+
+Чтение видео с файла: cap = cv2.VideoCapture("video.mp4")
+
+Чтение видео с камеры: cap = cv2.VideoCapture(0) — 0 для первой камеры, 1 для второй и т.д.
+
+Чтение кадра в цикле:
+
+python
+while True:
+    ret, frame = cap.read()
+    if not ret:
+        break
+    cv2.imshow("Video", frame)
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+cap.release()
+cv2.destroyAllWindows()
+Запись видео: out = cv2.VideoWriter("output.avi", cv2.VideoWriter_fourcc(*'XVID'), 20, (width, height))
+
+Преобразование в оттенки серого: gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+Размытие изображения: blurred = cv2.GaussianBlur(img, (5, 5), 0) — размытие по Гауссу с ядром 5x5
+
+Обнаружение границ (Canny): edges = cv2.Canny(img, 100, 200) — пороги 100 и 200
+
+Распознавание лиц (Haar Cascade):
+
+python
+face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+faces = face_cascade.detectMultiScale(gray, 1.3, 5)
+for (x, y, w, h) in faces:
+    cv2.rectangle(img, (x, y), (x+w, y+h), (255, 0, 0), 2)
+Захват изображения с камеры: ret, frame = cap.read() → cv2.imwrite("capture.jpg", frame)
+
+Обнаружение контуров:
+
+python
+contours, hierarchy = cv2.findContours(edges, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+cv2.drawContours(img, contours, -1, (0, 255, 0), 3)
+Изменение размера: resized = cv2.resize(img, (new_width, new_height)) или с сохранением пропорций: resized = cv2.resize(img, None, fx=0.5, fy=0.5)
+
+Добавление текста на изображение: cv2.putText(img, "Hello", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
+
+Рисование фигур: cv2.circle(img, (x, y), radius, (0, 255, 0), 2) — круг; cv2.line(img, (x1, y1), (x2, y2), (0, 0, 255), 2) — линия
+
+Работа с ROI (Region of Interest): roi = img[y:y+h, x:x+w] — вырезать область
+
+Поворот изображения: M = cv2.getRotationMatrix2D((w//2, h//2), 45, 1) → rotated = cv2.warpAffine(img, M, (w, h))
+
+Создание гистограммы: hist = cv2.calcHist([img], [0], None, [256], [0, 256]) → построить график с matplotlib
+
+Сегментация с использованием Watershed: markers = cv2.watershed(img, markers) для разделения объектов
+
+Обнаружение ключевых точек (SIFT): sift = cv2.SIFT_create() → keypoints, descriptors = sift.detectAndCompute(img, None)
+
+Сопоставление изображений: использовать cv2.BFMatcher() или cv2.FlannBasedMatcher() для поиска соответствий
+
+Калибровка камеры: ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, (w, h), None, None)
+
+Использование нейросетей (DNN): net = cv2.dnn.readNet("model.pb", "config.pbtxt") → blob = cv2.dnn.blobFromImage(img, 1/255.0, (224, 224), (0,0,0), swapRB=True) → net.setInput(blob) → output = net.forward()
