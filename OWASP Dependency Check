@@ -1,0 +1,111 @@
+РУКОВОДСТВО ПОЛЬЗОВАТЕЛЯ
+Наименование ПО: OWASP Dependency Check
+
+Краткое описание:
+OWASP Dependency Check — это инструмент для статического анализа безопасности приложений (SAST), который сканирует зависимости проекта (библиотеки, пакеты) на наличие известных уязвимостей из базы данных National Vulnerability Database (NVD). Поддерживает Java, .NET, JavaScript, Python, Ruby, PHP и другие языки и экосистемы. Интегрируется в CI/CD конвейеры (Jenkins, GitHub Actions, GitLab CI) для автоматической проверки безопасности на этапе сборки, позволяя выявлять уязвимости до того, как код попадет в продакшн.
+
+Запуск программы:
+
+Проверка установки: dependency-check --version
+
+Обновление базы данных: dependency-check --updateonly
+
+Сканирование папки проекта: dependency-check --scan /path/to/project
+
+Сканирование с генерацией HTML отчета: dependency-check --scan /path/to/project --format HTML --out /path/to/report
+
+Сканирование конкретного файла: dependency-check --scan ./pom.xml (для Maven-проектов)
+
+Просмотр отчета: открыть report.html в браузере
+
+Запланированный выход:
+
+Ctrl+C для остановки сканирования (если процесс затянулся)
+
+Закрыть окно браузера после просмотра отчета
+
+Основные функции:
+
+Сканирование зависимостей проекта на наличие известных уязвимостей из базы NVD (National Vulnerability Database)
+
+Использование базы данных NVD с ежедневными обновлениями для поиска актуальных уязвимостей
+
+Поддержка множества языков и экосистем: Java (Maven, Gradle), .NET (NuGet), JavaScript (npm, Yarn), Python (pip, Poetry), Ruby (Gem), PHP (Composer), Golang
+
+Генерация отчетов в форматах HTML, JSON, XML, CSV для удобного анализа и интеграции с другими системами
+
+Интеграция с CI/CD (Jenkins, GitHub Actions, GitLab CI, Maven, Gradle, SBT)
+
+Автоматическое обновление базы данных уязвимостей через --updateonly
+
+Возможность подавления ложных срабатываний через suppression.xml файл
+
+Поддержка экспериментальных данных для расширенного поиска уязвимостей
+
+Основные приемы работы:
+
+Обновление базы данных уязвимостей: dependency-check --updateonly (рекомендуется делать перед каждым сканированием)
+
+Сканирование папки проекта: dependency-check --scan ./my-project — сканирует все файлы зависимостей
+
+Сканирование с генерацией HTML отчета: dependency-check --scan ./my-project --format HTML --out ./reports
+
+Сканирование конкретного файла конфигурации: dependency-check --scan ./pom.xml (для Maven) или ./package.json (для npm)
+
+Параметры сканирования:
+
+--exclude — исключить папки из сканирования (например, --exclude ./test)
+
+--suppression — подавление ложных срабатываний через XML-файл (например, --suppression suppression.xml)
+
+--enableExperimental — включить экспериментальные данные из NVD
+
+--failOnCVSS — установить порог уровня уязвимости для остановки сборки (например, --failOnCVSS 7)
+
+Интеграция с Jenkins: установить плагин OWASP Dependency Check → добавить шаг сборки «Dependency-Check» → указать путь к проекту
+
+Интеграция с Maven: добавить плагин в pom.xml:
+
+xml
+<plugin>
+  <groupId>org.owasp</groupId>
+  <artifactId>dependency-check-maven</artifactId>
+  <version>8.2.1</version>
+  <executions>
+    <execution>
+      <goals>
+        <goal>check</goal>
+      </goals>
+    </execution>
+  </executions>
+</plugin>
+Интеграция с Gradle: добавить плагин в build.gradle → apply plugin: 'org.owasp.dependencycheck' → gradle dependencyCheckAnalyze
+
+Просмотр отчета: открыть reports/dependency-check-report.html в браузере → в отчете показаны: количество уязвимостей, уровень критичности, описание уязвимости, ссылки на CVE
+
+Автоматическое обновление базы: настроить cron-job для ежедневного обновления (например, 0 2 * * * dependency-check --updateonly)
+
+Создание файла подавления suppression.xml для исключения ложных срабатываний:
+
+xml
+<?xml version="1.0" encoding="UTF-8"?>
+<suppressions>
+  <suppress>
+    <notes>Это ложное срабатывание для библиотеки X</notes>
+    <gav regex="true">^com\.example:lib:.*$</gav>
+    <cve>CVE-2023-12345</cve>
+  </suppress>
+</suppressions>
+Интеграция с GitHub Actions: добавить шаг в workflow для запуска сканирования
+
+Интеграция с GitLab CI: добавить job в .gitlab-ci.yml для запуска сканирования
+
+Получение JSON-отчета: dependency-check --scan ./project --format JSON --out ./reports — для автоматической обработки
+
+Проверка конкретной библиотеки: dependency-check --scan ./libs/my-library.jar — сканирует только указанный файл
+
+Настройка размера кэша: --data /path/to/cache — указать папку для хранения кэша базы данных
+
+Вывод результатов в терминал: dependency-check --scan ./project --format HTML --out ./reports → затем cat ./reports/dependency-check-report.html (если нужно прочитать)
+
+Сканирование с таймаутом: --noupdate — использовать существующую базу без обновления для ускорения
